@@ -29,6 +29,7 @@ export const Purchase = () => {
   
   const [formData, setFormData] = useState({
     personId: '',
+    date: new Date().toISOString().split('T')[0],
     items: [] as InvoiceItem[],
     paidAmount: 0,
     notes: '',
@@ -85,6 +86,7 @@ export const Purchase = () => {
     
     addTransaction({
       type: TransactionType.PURCHASE,
+      date: new Date(formData.date).getTime(),
       personId: formData.personId,
       personName: person?.name || 'Unknown',
       items: formData.items,
@@ -107,7 +109,7 @@ export const Purchase = () => {
     });
 
     setIsModalOpen(false);
-    setFormData({ personId: '', items: [], paidAmount: 0, notes: '' });
+    setFormData({ personId: '', date: new Date().toISOString().split('T')[0], items: [], paidAmount: 0, notes: '' });
   };
 
   return (
@@ -188,19 +190,31 @@ export const Purchase = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t.addPurchase}>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t.supplier}</label>
-              <select
-                required
-                value={formData.personId}
-                onChange={(e) => setFormData(prev => ({ ...prev, personId: e.target.value }))}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all bg-white"
-              >
-                <option value="">{language === 'ur' ? 'سپلائر منتخب کریں' : 'Select Supplier'}</option>
-                {persons.filter(p => p.type === 'supplier').map(p => (
-                  <option key={p.id} value={p.id}>{p.name} ({p.phone})</option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t.supplier}</label>
+                <select
+                  required
+                  value={formData.personId}
+                  onChange={(e) => setFormData(prev => ({ ...prev, personId: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all bg-white"
+                >
+                  <option value="">{language === 'ur' ? 'سپلائر منتخب کریں' : 'Select Supplier'}</option>
+                  {persons.filter(p => p.type === 'supplier').map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.phone})</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t.date}</label>
+                <input
+                  required
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all bg-white"
+                />
+              </div>
             </div>
 
             <div className="p-4 bg-slate-50 rounded-xl space-y-3 border border-slate-200 italic">

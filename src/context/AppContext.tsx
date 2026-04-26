@@ -14,8 +14,8 @@ interface AppContextType extends AppState {
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (product: Product) => void;
   deleteProduct: (id: string) => void;
-  addTransaction: (transaction: Omit<Transaction, 'id' | 'date'>) => void;
-  addExpense: (expense: Omit<Expense, 'id' | 'date'>) => void;
+  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  addExpense: (expense: Omit<Expense, 'id'>) => void;
   deleteExpense: (id: string) => void;
 }
 
@@ -99,11 +99,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  const addTransaction = (transactionData: Omit<Transaction, 'id' | 'date'>) => {
+  const addTransaction = (transactionData: Omit<Transaction, 'id'>) => {
     const newTransaction: Transaction = {
       ...transactionData,
       id: crypto.randomUUID(),
-      date: Date.now(),
+      date: transactionData.date || Date.now(),
     };
     
     // Update person balance
@@ -123,11 +123,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const addExpense = (expenseData: Omit<Expense, 'id' | 'date'>) => {
+  const addExpense = (expenseData: Omit<Expense, 'id'>) => {
     const newExpense: Expense = {
       ...expenseData,
       id: crypto.randomUUID(),
-      date: Date.now(),
+      date: expenseData.date || Date.now(),
     };
     setState(prev => ({ ...prev, expenses: [...prev.expenses, newExpense] }));
   };

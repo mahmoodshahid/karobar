@@ -22,6 +22,7 @@ export const Expenses = () => {
     category: ExpenseCategory.OTHER,
     amount: 0,
     notes: '',
+    date: new Date().toISOString().split('T')[0],
   });
 
   const filteredExpenses = expenses.filter(e => 
@@ -33,9 +34,17 @@ export const Expenses = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addExpense(formData);
+    addExpense({
+      ...formData,
+      date: new Date(formData.date).getTime(),
+    });
     setIsModalOpen(false);
-    setFormData({ category: ExpenseCategory.OTHER, amount: 0, notes: '' });
+    setFormData({ 
+      category: ExpenseCategory.OTHER, 
+      amount: 0, 
+      notes: '', 
+      date: new Date().toISOString().split('T')[0] 
+    });
   };
 
   return (
@@ -128,17 +137,29 @@ export const Expenses = () => {
         title={t.addExpense}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t.category}</label>
-            <select
-              value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as ExpenseCategory }))}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-white"
-            >
-              {Object.values(ExpenseCategory).map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.category}</label>
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as ExpenseCategory }))}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-white"
+              >
+                {Object.values(ExpenseCategory).map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t.date}</label>
+              <input
+                required
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-white"
+              />
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t.amount}</label>
